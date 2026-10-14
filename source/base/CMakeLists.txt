@@ -109,7 +109,7 @@ if (LINUX)
         sys_info_linux.cc)
 endif()
 
-if (APPLE)
+if (MACOS)
     list(APPEND SOURCE_BASE
         core_application_mac.mm
         core_service.h
@@ -127,6 +127,11 @@ endif()
 if (ANDROID)
     list(APPEND SOURCE_BASE
         sys_info_android.cc)
+endif()
+
+if (IOS)
+    list(APPEND SOURCE_BASE
+        sys_info_ios.mm)
 endif()
 
 list(APPEND SOURCE_BASE_TESTS
@@ -163,7 +168,7 @@ if (LINUX)
     include(linux/sources.cmake)
 endif()
 
-if (APPLE)
+if (MACOS)
     include(mac/sources.cmake)
 endif()
 
@@ -187,7 +192,7 @@ if (LINUX)
     source_group(linux FILES ${SOURCE_BASE_LINUX})
 endif()
 
-if (APPLE)
+if (MACOS)
     source_group(mac FILES ${SOURCE_BASE_MAC})
 endif()
 
@@ -231,7 +236,13 @@ if (ANDROID)
     set(BASE_PLATFORM_LIBS log oboe::oboe)
 endif()
 
-if (APPLE)
+if (IOS)
+    set(BASE_PLATFORM_LIBS
+        ${FOUNDATION_LIB} ${UIKIT_LIB} ${COREMEDIA_LIB} ${COREVIDEO_LIB} ${VIDEOTOOLBOX_LIB}
+        ${SECURITY_LIB} ${SYSTEMCONFIGURATION_LIB})
+endif()
+
+if (MACOS)
     set(BASE_PLATFORM_LIBS
         ${FOUNDATION_LIB} ${SCREENCAPTUREKIT_LIB} ${COREMEDIA_LIB} ${SYSTEMCONFIGURATION_LIB}
         ${IOKIT_LIB} ${CARBON_LIB} ${APPLICATIONSERVICES_LIB} ${APPKIT_LIB} ${OSLOG_LIB}
@@ -249,8 +260,13 @@ if (LINUX)
     set(BASE_TESTS_PLATFORM_LIBS stdc++fs)
 endif()
 
-if (APPLE)
+if (MACOS)
     set(BASE_TESTS_PLATFORM_LIBS ${FOUNDATION_LIB})
+endif()
+
+if (IOS)
+    # Unit tests are run on the desktop systems; an iOS executable has to be an application bundle.
+    return()
 endif()
 
 add_executable(aspia_base_tests
